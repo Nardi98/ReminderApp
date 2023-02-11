@@ -3,29 +3,44 @@ package com.example.reminderapp.ui.newReminder
 
 
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.reminderapp.Graph
+import com.example.reminderapp.data.Reminder
 import com.example.reminderapp.ui.account.BackButtonTopBar
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 
-fun NewReminder(navController: NavController) {
+fun NewReminder(
+		navController: NavController,
+
+		) {
 	Scaffold(
 			modifier = Modifier.fillMaxSize(),
 			topBar = { BackButtonTopBar(page = "New reminder", navController = navController ) }
 			)
 	{
+
+		val remiderRepository = Graph.reminderRepository
+		val coroutineScope = rememberCoroutineScope()
 		val name = rememberSaveable { (mutableStateOf("")) }
 		val description = rememberSaveable { (mutableStateOf("")) }
 		val startDate = rememberSaveable { (mutableStateOf("")) }
@@ -117,8 +132,22 @@ fun NewReminder(navController: NavController) {
 			
 			Spacer(modifier = Modifier.height(40.dp))
 			Button(
-					onClick = { navController.navigate(route = "home")},
-					modifier = Modifier.fillMaxWidth().height(60.dp),
+					onClick = {
+						coroutineScope.launch {
+							remiderRepository.addReminder(
+									reminder = Reminder(
+											name = name.value,
+											description = description.value,
+											beginningDate = LocalDate.of(2024, 10, 12)
+
+											))
+
+						}
+
+						navController.navigate(route = "home")},
+					modifier = Modifier
+						.fillMaxWidth()
+						.height(60.dp),
 					shape = MaterialTheme.shapes.medium,
 					colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primaryVariant)
 				  ) { Text(text = "Save") }

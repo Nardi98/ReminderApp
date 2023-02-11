@@ -8,7 +8,7 @@ import com.example.reminderapp.data.Reminder
 
 @Database(
 		entities = [Reminder::class],
-		version = 2,
+		version = 3,
 		exportSchema = false
 		 )
 @TypeConverters(LocalDateConverter::class/*, LocalTimeConverter::class*/)

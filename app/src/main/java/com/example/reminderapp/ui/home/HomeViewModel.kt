@@ -26,12 +26,8 @@ class HomeViewModel(
 
 
 	init {
-		loadRemindersInDb()
-
+		//loadRemindersInDb() // was needed for debugging purpose
 		viewModelScope.launch {
-
-
-			print("reminders read")
 			reminderRepository.reminders().collect( ){ remindersList ->
 				_state.value = HomeViewState(
 						reminders = remindersList
@@ -41,7 +37,13 @@ class HomeViewModel(
 
 
 	}
-	@RequiresApi(Build.VERSION_CODES.O)
+
+	/**this function was needed for starting the project by adding some fake functions inside the database
+	 * if it will be needed again to add fake value decomment also the section in the init function
+	 */
+
+
+	/*@RequiresApi(Build.VERSION_CODES.O)
 	private fun loadRemindersInDb(){
 
 		print("loadReminder")
@@ -52,7 +54,7 @@ class HomeViewModel(
 						beginningDate = LocalDate.of(2024, 10, 12),
 						beginningTime = 5,//LocalTime.of(10, 20),
 						endingDate = LocalDate.of(2024, 10, 12),
-						endingTime = 5 //LocalTime.of(12, 20),*/
+						endingTime = 5 //LocalTime.of(12, 20),
 						),
 				Reminder(
 						name = "mobile computing assignment",
@@ -60,7 +62,7 @@ class HomeViewModel(
 						beginningDate = LocalDate.of(2024, 10, 12),
 						beginningTime = 5,//LocalTime.of(10, 20),
 						endingDate = LocalDate.of(2024, 10, 12),
-						endingTime = 5 //LocalTime.of(12, 20),*/
+						endingTime = 5 //LocalTime.of(12, 20),
 						)
 
 
@@ -68,7 +70,7 @@ class HomeViewModel(
 		viewModelScope.launch {
 			list.forEach { reminder -> reminderRepository.addReminder(reminder) }
 		}
-	}
+	}*/
 		}
 
 data class HomeViewState(

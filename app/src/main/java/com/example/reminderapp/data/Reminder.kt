@@ -18,9 +18,9 @@ data class Reminder(
 		@ColumnInfo(name = "name")val name:String,
 		@ColumnInfo(name = "description")val description: String,
 		@ColumnInfo(name = "beginningDate")val beginningDate: LocalDate,
-		@ColumnInfo(name = "beginningTime" )val beginningTime: Int, //LocalTime?,
-		@ColumnInfo(name = "endingDate")val endingDate: LocalDate?,
-		@ColumnInfo(name = "endingTime")val endingTime: Int//LocalTime?,
+		@ColumnInfo(name = "beginningTime" )val beginningTime: Int? = null, //LocalTime?,
+		@ColumnInfo(name = "endingDate")val endingDate: LocalDate? = null,
+		@ColumnInfo(name = "endingTime")val endingTime: Int? = null//LocalTime?,
 		//val category: Category
 
 				   )
