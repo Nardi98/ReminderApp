@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 abstract class ReminderDao {
 
-	@Query(value = "SELECT * FROM reminders WHERE name = :name")
+	@Query(value = "SELECT * FROM reminders WHERE message = :name")
 	abstract suspend fun getReminderWithName(name:String): Reminder?
 
 	@Query(value = "SELECT * FROM reminders WHERE id = :REminderId")

@@ -4,52 +4,40 @@ package com.example.reminderapp.data
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.room.*
-import java.time.LocalDate
-import java.time.LocalTime
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 
 @Entity(
 		tableName = "reminders",
 		indices = [Index("id", unique = true)]
 	   )
-
+@TypeConverters(LocalDateTimeConverter::class)
 data class Reminder(
 		@PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long = 0,
-		@ColumnInfo(name = "name")val name:String,
-		@ColumnInfo(name = "description")val description: String,
-		@ColumnInfo(name = "beginningDate")val beginningDate: LocalDate,
-		@ColumnInfo(name = "beginningTime" )val beginningTime: Int? = null, //LocalTime?,
-		@ColumnInfo(name = "endingDate")val endingDate: LocalDate? = null,
-		@ColumnInfo(name = "endingTime")val endingTime: Int? = null//LocalTime?,
+		@ColumnInfo(name = "message") val message: String,
+		val creationTime: LocalDateTime,
+		val reminderTime: LocalDateTime? = null,
+		val locationX: Float? = null,
+		val locationY: Float? = null,
+
 		//val category: Category
 
 				   )
 
 
-class LocalDateConverter {
+
+class LocalDateTimeConverter {
 	@RequiresApi(Build.VERSION_CODES.O)
 	@TypeConverter
-	fun fromTimestamp(value: Long?): LocalDate? {
-		return value?.let { LocalDate.ofEpochDay(it) }
+	fun fromTimestamp(value: Long?): LocalDateTime? {
+		return value?.let { LocalDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault()) }
 	}
 
 	@RequiresApi(Build.VERSION_CODES.O)
 	@TypeConverter
-	fun dateToTimestamp(date: LocalDate?): Long? {
-		return date?.toEpochDay()
+	fun dateToTimestamp(date: LocalDateTime?): Long? {
+		return date?.atZone(ZoneId.systemDefault())?.toInstant()?.toEpochMilli()
 	}
 }
-
-/*class LocalTimeConverter {
-
-	@RequiresApi(Build.VERSION_CODES.O)
-	@TypeConverter
-	fun fromTimestamp(value: String?): LocalTime? {
-		return LocalTime.parse(value)
-	}
-
-	@TypeConverter
-	fun dateToTimestamp(time: LocalTime?): String? {
-		return time?.toString()
-	}
-}*/

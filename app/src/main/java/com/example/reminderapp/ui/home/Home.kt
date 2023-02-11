@@ -58,8 +58,8 @@ fun Home(
 
 
 
-        ) {
-        Column(modifier = Modifier.fillMaxWidth() ) {
+        ) { padding ->
+        Column(modifier = Modifier.fillMaxWidth().padding(padding) ) {
             //Text(text = viewState.reminders[0].name)
 
             LazyColumn(
@@ -126,20 +126,20 @@ fun ReminderShower(event: Reminder){
         {
             Text(
                     modifier = Modifier.padding(start = 15.dp, top = 5.dp),
-                    text = event.name,
+                    text = event.message,
                     fontSize = MaterialTheme.typography.subtitle1.fontSize
                 )
 
             Text(
                     modifier = Modifier.padding(start = 15.dp),
-                    text = "Day: ".plus(DateTimeCombine(event.beginningDate.toString(), event.endingDate.toString())),
+                    text = "Day: ".plus(DateTimeCombine(event.creationTime.toString(), event.reminderTime.toString())),
                     fontSize = MaterialTheme.typography.subtitle2.fontSize,
                     fontStyle = MaterialTheme.typography.caption.fontStyle
                 )
-            if(event.beginningTime != null){
+            if(event.creationTime != null){
                 Text(
                         modifier = Modifier.padding(start = 15.dp),
-                        text = "Time ".plus(DateTimeCombine(event.beginningTime.toString(), event.endingTime.toString())),
+                        text = "Time ".plus(DateTimeCombine(event.creationTime.toString(), event.reminderTime.toString())),
                         fontSize = MaterialTheme.typography.subtitle2.fontSize,
                         fontStyle = MaterialTheme.typography.caption.fontStyle
                     )
