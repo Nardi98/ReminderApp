@@ -3,6 +3,7 @@ package com.example.reminderapp.ui.home
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,11 +12,16 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.materialIcon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,6 +33,7 @@ import com.example.reminderapp.data.Reminder
 
 
 
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 
 @Composable
@@ -59,7 +66,9 @@ fun Home(
 
 
         ) { padding ->
-        Column(modifier = Modifier.fillMaxWidth().padding(padding) ) {
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .padding(padding) ) {
             //Text(text = viewState.reminders[0].name)
 
             LazyColumn(
@@ -69,9 +78,36 @@ fun Home(
                     verticalArrangement = Arrangement.spacedBy(14.dp)
                     ){
 
-                items(viewState.reminders ){
-                    event -> ReminderShower(event)
-                }
+
+                items(
+                        items = viewState.reminders,
+                        key = {reminder -> reminder.id},
+                        itemContent = {reminder ->
+
+                            val currentReminder by rememberUpdatedState(reminder)
+                            val dismissState = rememberDismissState(
+                                    confirmStateChange = {
+                                        viewModel.removeReminder(currentReminder)
+                                        true
+                                    }
+                                                                   )
+                            SwipeToDismiss(
+                                    state = dismissState,
+                                    modifier = Modifier.animateItemPlacement(),
+                                    background = {
+                                        DismissBackground()
+                                    },
+                                    dismissContent = {
+                                        ReminderShower(reminder)
+                                    }
+                                        )
+
+
+
+
+
+                        }
+                     )
             }
 
 
@@ -150,6 +186,34 @@ fun ReminderShower(event: Reminder){
 
     }
 }
+
+@Composable
+fun DismissBackground(){
+    Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 100.dp, max = 150.dp),
+            shape = MaterialTheme.shapes.large,
+            backgroundColor = MaterialTheme.colors.error
+
+
+        ) {
+        Row(
+                modifier = Modifier.fillMaxWidth().padding(10.dp),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+
+           ) {
+            Text(text = "Delete" , style =  MaterialTheme.typography.subtitle1)
+            Spacer(modifier = Modifier.width(10.dp))
+            Icon(imageVector = Icons.Default.Delete, contentDescription ="Delete Icon")
+
+        }
+
+    }
+
+    }
+
 
 fun DateTimeCombine(firstOne: String, secondOne: String): String {
 

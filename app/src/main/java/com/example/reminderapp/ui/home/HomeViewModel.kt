@@ -38,6 +38,13 @@ class HomeViewModel(
 
 	}
 
+	fun removeReminder(reminder: Reminder){
+		viewModelScope.launch {
+			Graph.reminderRepository.deleteReminder(reminder)
+		}
+
+	}
+
 	/**this function was needed for starting the project by adding some fake functions inside the database
 	 * if it will be needed again to add fake value decomment also the section in the init function
 	 */
