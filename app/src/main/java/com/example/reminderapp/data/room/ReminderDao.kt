@@ -17,8 +17,9 @@ abstract class ReminderDao {
 	@Query(value = "SELECT * FROM reminders WHERE message = :name")
 	abstract suspend fun getReminderWithName(name:String): Reminder?
 
-	@Query(value = "SELECT * FROM reminders WHERE id = :REminderId")
-	abstract suspend fun getReminderById(REminderId:Long): Reminder?
+	@Query(value = "SELECT * FROM reminders WHERE id = :ReminderId")
+	abstract fun getReminderById(ReminderId: Long): Flow<Reminder>
+
 
 	@Query(value = "SELECT * FROM reminders LIMIT 15")
 	abstract fun reminders(): Flow<List<Reminder>>

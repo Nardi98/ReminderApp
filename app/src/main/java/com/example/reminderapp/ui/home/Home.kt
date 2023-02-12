@@ -14,23 +14,24 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.materialIcon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color.Companion.Red
+import androidx.compose.ui.input.key.Key.Companion.D
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.os.bundleOf
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.navArgument
 
 import com.example.reminderapp.R
 import com.example.reminderapp.data.Reminder
-
-
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
@@ -43,8 +44,8 @@ fun Home(
         )
 
 {
-    val viewState by viewModel.state.collectAsState()
 
+    val viewState by viewModel.state.collectAsState()
     val state = rememberLazyListState()
 
 
@@ -72,7 +73,7 @@ fun Home(
             //Text(text = viewState.reminders[0].name)
 
             LazyColumn(
-                    state =state,
+                    state = state,
                     modifier = Modifier.fillMaxWidth(),
                     contentPadding = PaddingValues(start = 24.dp, end = 24.dp, top = 44.dp, bottom = 24.dp),
                     verticalArrangement = Arrangement.spacedBy(14.dp)
@@ -98,22 +99,12 @@ fun Home(
                                         DismissBackground()
                                     },
                                     dismissContent = {
-                                        ReminderShower(reminder)
+                                        ReminderShower(reminder, navController =  navController)
                                     }
                                         )
-
-
-
-
-
                         }
                      )
             }
-
-
-
-
-            
         }
     }
 
@@ -142,13 +133,16 @@ fun ReminderAppTopBar(page:String, navController:NavController){
 
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ReminderShower(event: Reminder){
+fun ReminderShower(reminder: Reminder, navController: NavController){
+    val Id:Long = reminder.id
+
     Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = 100.dp, max = 150.dp)
-                .clickable(enabled = true) { /*TODO*/ },
+                .clickable(enabled = true) { navController.navigate(route = "ModifyReminder/$Id")} ,
             shape = MaterialTheme.shapes.large,
             elevation = 5.dp
 
@@ -162,20 +156,14 @@ fun ReminderShower(event: Reminder){
         {
             Text(
                     modifier = Modifier.padding(start = 15.dp, top = 5.dp),
-                    text = event.message,
+                    text = reminder.message,
                     fontSize = MaterialTheme.typography.subtitle1.fontSize
                 )
 
-            Text(
-                    modifier = Modifier.padding(start = 15.dp),
-                    text = "Day: ".plus(DateTimeCombine(event.creationTime.toString(), event.reminderTime.toString())),
-                    fontSize = MaterialTheme.typography.subtitle2.fontSize,
-                    fontStyle = MaterialTheme.typography.caption.fontStyle
-                )
-            if(event.creationTime != null){
+            if(reminder.reminderTime != null){
                 Text(
                         modifier = Modifier.padding(start = 15.dp),
-                        text = "Time ".plus(DateTimeCombine(event.creationTime.toString(), event.reminderTime.toString())),
+                        text = dateTimeConverter(reminder.reminderTime),
                         fontSize = MaterialTheme.typography.subtitle2.fontSize,
                         fontStyle = MaterialTheme.typography.caption.fontStyle
                     )
@@ -223,6 +211,14 @@ fun DateTimeCombine(firstOne: String, secondOne: String): String {
     }else{
         return firstOne.plus(" - ").plus(secondOne)
     }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun dateTimeConverter(dateTime: LocalDateTime): String{
+    val localDate = DateTimeFormatter.ofPattern("dd MM yyyy").format(dateTime.toLocalDate())
+    val localTime = DateTimeFormatter.ofPattern("hh-mm").format(dateTime.toLocalTime())
+
+    return localDate.toString().plus("  ").plus(localTime.toString())
 }
 
 
